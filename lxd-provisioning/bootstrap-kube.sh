@@ -69,7 +69,7 @@ then
   cp /etc/kubernetes/admin.conf /root/.kube/config  
 
   echo "[TASK 10] Deploy Flannel network"
-  kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml > /dev/null 2>&1
+  kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
 
   echo "[TASK 11] Generate and save cluster join command to /joincluster.sh"
   joinCommand=$(kubeadm token create --print-join-command 2>/dev/null) 
