@@ -29,6 +29,7 @@ echo overlay >> /etc/modules
 
 echo '#!/bin/sh -e
 mount --make-rshared /' > /etc/rc.local
+mkdir /run/flannel
 touch /run/flannel/subnet.env
 echo 'FLANNEL_NETWORK=10.244.0.0/16
 FLANNEL_SUBNET=10.244.0.1/24
