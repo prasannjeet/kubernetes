@@ -5,6 +5,7 @@
 
 echo "[TASK 0] Install essential packages"
 apt install -qq -y net-tools curl ssh software-properties-common >/dev/null 2>&1
+apt-get install -qq -y linux-image-$(uname -r)
 
 echo "[TASK 1] Install containerd runtime"
 apt update -qq >/dev/null 2>&1
