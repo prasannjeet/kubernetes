@@ -71,7 +71,7 @@ case "$1" in
     kubeprovision
     ;;
   provisionvm)
-    echo -e "\nProvisioning Kubernetes Cluster...\n"
+    echo -e "\nProvisioning Kubernetes Cluster using Virtual Machine images...\n"
     kubeprovisionvm
     ;;
   destroy)
