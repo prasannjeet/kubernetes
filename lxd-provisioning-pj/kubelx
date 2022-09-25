@@ -1,0 +1,89 @@
+#!/bin/bash
+
+usage()
+{
+  echo "Usage: kubelx [provision|destroy]"
+  exit 1
+}
+
+NODES="kmaster kworker1 kworker2"
+
+kubeprovisionvm()
+{
+  # check if we have k8s profile or create one
+  lxc profile list | grep -qo k8s || (lxc profile create k8s && cat k8s-profile-config | lxc profile edit k8s)
+  echo
+  for node in $NODES
+  do
+    echo "==> Bringing up $node"
+    lxc launch ubuntu:20.04 --vm $node --profile k8s
+    sleep 60
+    echo "==> Running provisioner script on $node"
+    cat bootstrap-kube.sh | lxc exec $node bash
+    echo
+  done
+}
+
+kubeprovision()
+{
+  # check if we have k8s profile or create one
+  lxc profile list | grep -qo k8s || (lxc profile create k8s && cat k8s-profile-config | lxc profile edit k8s)
+  echo
+  for node in $NODES
+  do
+    echo "==> Bringing up $node"
+    lxc launch ubuntu:20.04 $node --profile k8s
+    sleep 30
+    echo "==> Running provisioner script on $node"
+    lxc config device add $node kvm unix-char source=/dev/kvm
+    lxc config device add $node vhost-net unix-char source=/dev/vhost-net
+    lxc config device add $node vhost-vsock unix-char source=/dev/vhost-vsock
+    lxc config device add $node "kmsg" unix-char source="/dev/kmsg" path="/dev/kmsg"
+    cat bootstrap-kube.sh | lxc exec $node bash
+    echo
+  done
+}
+
+kubeprovisiononly()
+{
+  # check if we have k8s profile or create one
+  lxc profile list | grep -qo k8s || (lxc profile create k8s && cat k8s-profile-config | lxc profile edit k8s)
+  echo
+  for node in $NODES
+  do
+    echo "==> Running provisioner script on $node"
+    cat bootstrap-kube.sh | lxc exec $node bash
+    echo
+  done
+}
+
+kubedestroy()
+{
+  for node in $NODES
+  do
+    echo "==> Destroying $node..."
+    lxc delete --force $node
+  done
+}
+
+case "$1" in
+  provision)
+    echo -e "\nProvisioning Kubernetes Cluster...\n"
+    kubeprovision
+    ;;
+  provisionvm)
+    echo -e "\nProvisioning Kubernetes Cluster using Virtual Machine images...\n"
+    kubeprovisionvm
+    ;;
+  destroy)
+    echo -e "\nDestroying Kubernetes Cluster...\n"
+    kubedestroy
+    ;;
+  ponly)
+    echo -e "\nAssuming Containers Created. Only Provisioning...\n"
+    kubeprovisiononly
+    ;;
+  *)
+    usage
+    ;;
+esac
