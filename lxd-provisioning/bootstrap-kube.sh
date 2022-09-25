@@ -21,6 +21,15 @@ apt-add-repository "deb http://apt.kubernetes.io/ kubernetes-xenial main" >/dev/
 echo "[TASK 3] Install Kubernetes components (kubeadm, kubelet and kubectl)"
 apt install -qq -y kubeadm=1.22.0-00 kubelet=1.22.0-00 kubectl=1.22.0-00 >/dev/null 2>&1
 echo 'KUBELET_EXTRA_ARGS="--fail-swap-on=false"' > /etc/default/kubelet
+
+# Some tweaks to ensure vm works
+swapoff -a
+echo overlay >> /etc/modules
+
+echo '#!/bin/sh -e
+mount --make-rshared /' > /etc/rc.local
+# Tweaks end
+
 systemctl restart kubelet
 
 echo "[TASK 4] Enable ssh password authentication"
