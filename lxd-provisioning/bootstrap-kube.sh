@@ -38,6 +38,7 @@ FLANNEL_IPMASQ=true' > /run/flannel/subnet.env
 
 
 sed -i '1s/^/[Unit]\nDescription=Kubernetes\nAfter=syslog.target\nAfter=network.target\n/' /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+systemctl daemon-reload
 # Tweaks end
 
 systemctl restart kubelet
