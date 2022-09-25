@@ -19,12 +19,6 @@ echo "[TASK 2] Add apt repo for kubernetes"
 curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add - >/dev/null 2>&1
 apt-add-repository "deb http://apt.kubernetes.io/ kubernetes-xenial main" >/dev/null 2>&1
 
-
-echo 'FLANNEL_NETWORK=10.244.0.0/16
-FLANNEL_SUBNET=10.244.0.1/24
-FLANNEL_MTU=1450
-FLANNEL_IPMASQ=true' > /run/flannel/subnet.env
-
 echo "[TASK 3] Install Kubernetes components (kubeadm, kubelet and kubectl)"
 apt install -qq -y kubeadm=1.22.0-00 kubelet=1.22.0-00 kubectl=1.22.0-00 >/dev/null 2>&1
 echo 'KUBELET_EXTRA_ARGS="--fail-swap-on=false"' > /etc/default/kubelet
@@ -35,7 +29,11 @@ echo overlay >> /etc/modules
 
 echo '#!/bin/sh -e
 mount --make-rshared /' > /etc/rc.local
-
+touch /run/flannel/subnet.env
+echo 'FLANNEL_NETWORK=10.244.0.0/16
+FLANNEL_SUBNET=10.244.0.1/24
+FLANNEL_MTU=1450
+FLANNEL_IPMASQ=true' > /run/flannel/subnet.env
 # Tweaks end
 
 systemctl restart kubelet
