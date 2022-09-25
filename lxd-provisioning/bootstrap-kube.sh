@@ -37,8 +37,8 @@ FLANNEL_MTU=1450
 FLANNEL_IPMASQ=true' > /run/flannel/subnet.env
 
 
-# sed -i '1s/^/[Unit]\nDescription=Kubernetes\nAfter=syslog.target\nAfter=network.target\n/' /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
-# systemctl daemon-reload
+sed -i '1s/^/[Unit]\nDescription=Kubernetes\nAfter=syslog.target\nAfter=network.target\n/' /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+systemctl daemon-reload
 # Tweaks end
 
 systemctl restart kubelet
@@ -73,6 +73,8 @@ then
   cp /etc/kubernetes/admin.conf /root/.kube/config  
 
   echo "[TASK 10] Deploy Flannel network"
+  kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+  sleep 15
   kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
 
   echo "[TASK 11] Generate and save cluster join command to /joincluster.sh"
