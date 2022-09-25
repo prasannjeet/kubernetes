@@ -17,8 +17,12 @@ kubeprovision()
   do
     echo "==> Bringing up $node"
     lxc launch ubuntu:20.04 --vm $node --profile k8s
-    sleep 45
-    echo "==> Running provisioner script"
+    echo
+  done
+  sleep 60
+  for node in $NODES
+  do
+    echo "==> Running provisioner script in $node"
     cat bootstrap-kube.sh | lxc exec $node bash
     echo
   done
