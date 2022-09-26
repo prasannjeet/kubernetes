@@ -46,6 +46,7 @@ kubeprovision()
   for worker in $WORKERS
   do
     lxc copy kmaster $worker
+    lxc start $worker
   done
 
   echo "==> Running configure script to all nodes"
