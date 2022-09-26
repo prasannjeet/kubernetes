@@ -77,7 +77,6 @@ then
   su ubuntu
   sleep 35
   kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
-  su root
 
   echo "[TASK 11] Generate and save cluster join command to /joincluster.sh"
   joinCommand=$(kubeadm token create --print-join-command 2>/dev/null) 
