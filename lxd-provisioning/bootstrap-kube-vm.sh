@@ -24,21 +24,21 @@ apt install -qq -y kubeadm=1.25.2-00 kubelet=1.25.2-00 kubectl=1.25.2-00 >/dev/n
 echo 'KUBELET_EXTRA_ARGS="--fail-swap-on=false"' > /etc/default/kubelet
 
 # Some tweaks to ensure vm works
-# swapoff -a
-# echo overlay >> /etc/modules
+swapoff -a
+echo overlay >> /etc/modules
 
-# echo '#!/bin/sh -e
-# mount --make-rshared /' > /etc/rc.local
-# mkdir /run/flannel
-# touch /run/flannel/subnet.env
-# echo 'FLANNEL_NETWORK=10.244.0.0/16
-# FLANNEL_SUBNET=10.244.0.1/24
-# FLANNEL_MTU=1450
-# FLANNEL_IPMASQ=true' > /run/flannel/subnet.env
+echo '#!/bin/sh -e
+mount --make-rshared /' > /etc/rc.local
+mkdir /run/flannel
+touch /run/flannel/subnet.env
+echo 'FLANNEL_NETWORK=10.244.0.0/16
+FLANNEL_SUBNET=10.244.0.1/24
+FLANNEL_MTU=1450
+FLANNEL_IPMASQ=true' > /run/flannel/subnet.env
 
 
-# sed -i '1s/^/[Unit]\nDescription=Kubernetes\nAfter=syslog.target\nAfter=network.target\n/' /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
-# systemctl daemon-reload
+sed -i '1s/^/[Unit]\nDescription=Kubernetes\nAfter=syslog.target\nAfter=network.target\n/' /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+systemctl daemon-reload
 # Tweaks end
 
 systemctl restart kubelet

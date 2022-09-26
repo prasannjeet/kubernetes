@@ -32,6 +32,10 @@ kubeprovisionvmonly()
   for node in $NODES
   do
     echo "==> Running provisioner script on $node"
+    lxc config device add $node kvm unix-char source=/dev/kvm
+    lxc config device add $node vhost-net unix-char source=/dev/vhost-net
+    lxc config device add $node vhost-vsock unix-char source=/dev/vhost-vsock
+    lxc config device add $node "kmsg" unix-char source="/dev/kmsg" path="/dev/kmsg"
     cat bootstrap-kube-vm.sh | lxc exec $node bash
     echo
   done
