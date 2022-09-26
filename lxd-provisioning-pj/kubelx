@@ -7,6 +7,7 @@ usage()
 }
 
 NODES="kmaster kworker1 kworker2"
+WORKERS="kworker1 kworker2"
 
 kubeprovisionvm()
 {
@@ -29,19 +30,33 @@ kubeprovision()
   # check if we have k8s profile or create one
   lxc profile list | grep -qo k8s || (lxc profile create k8s && cat k8s-profile-config | lxc profile edit k8s)
   echo
+
+  echo "==> Bringing up kmaster"
+  lxc launch ubuntu:20.04 kmaster --profile k8s
+  sleep 30
+  echo "==> Running provisioner script on kmaster"
+  lxc config device add kmaster kvm unix-char source=/dev/kvm
+  lxc config device add kmaster vhost-net unix-char source=/dev/vhost-net
+  lxc config device add kmaster vhost-vsock unix-char source=/dev/vhost-vsock
+  lxc config device add kmaster "kmsg" unix-char source="/dev/kmsg" path="/dev/kmsg"
+  cat bootstrap-kube.sh | lxc exec kmaster bash
+  echo
+
+  echo "==> Copying kmaster containers to workers"
+  for worker in $WORKERS
+  do
+    lxc copy kmaster $worker
+  done
+
+  echo "==> Running configure script to all nodes"
+  echo
   for node in $NODES
   do
-    echo "==> Bringing up $node"
-    lxc launch ubuntu:20.04 $node --profile k8s
-    sleep 30
     echo "==> Running provisioner script on $node"
-    lxc config device add $node kvm unix-char source=/dev/kvm
-    lxc config device add $node vhost-net unix-char source=/dev/vhost-net
-    lxc config device add $node vhost-vsock unix-char source=/dev/vhost-vsock
-    lxc config device add $node "kmsg" unix-char source="/dev/kmsg" path="/dev/kmsg"
-    cat bootstrap-kube.sh | lxc exec $node bash
+    cat configure-kube.sh | lxc exec $node bash
     echo
   done
+
 }
 
 kubeprovisiononly()
