@@ -73,6 +73,8 @@ then
   cp /etc/kubernetes/admin.conf /root/.kube/config  
 
   echo "[TASK 10] Deploy Flannel network"
+  su ubuntu
+  sleep 35
   kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
 
   echo "[TASK 11] Generate and save cluster join command to /joincluster.sh"
