@@ -20,7 +20,7 @@ curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add - >/
 apt-add-repository "deb http://apt.kubernetes.io/ kubernetes-xenial main" >/dev/null 2>&1
 
 echo "[TASK 3] Install Kubernetes components (kubeadm, kubelet and kubectl)"
-apt install -qq -y kubeadm=1.22.0-00 kubelet=1.22.0-00 kubectl=1.22.0-00 >/dev/null 2>&1
+apt install -qq -y kubeadm=1.25.2-00 kubelet=1.25.2-00 kubectl=1.25.2-00 >/dev/null 2>&1
 echo 'KUBELET_EXTRA_ARGS="--fail-swap-on=false"' > /etc/default/kubelet
 
 # Some tweaks to ensure vm works
@@ -73,6 +73,7 @@ then
   cp /etc/kubernetes/admin.conf /root/.kube/config  
 
   echo "[TASK 10] Deploy Flannel network"
+  kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
   sleep 35
   kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
 
