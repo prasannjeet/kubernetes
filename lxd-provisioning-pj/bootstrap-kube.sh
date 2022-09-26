@@ -36,6 +36,7 @@ FLANNEL_SUBNET=10.244.0.1/24
 FLANNEL_MTU=1450
 FLANNEL_IPMASQ=true' > /run/flannel/subnet.env
 
+sysctl net.bridge.bridge-nf-call-iptables=1
 
 sed -i '1s/^/[Unit]\nDescription=Kubernetes\nAfter=syslog.target\nAfter=network.target\n/' /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
 systemctl daemon-reload
