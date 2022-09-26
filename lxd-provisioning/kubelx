@@ -24,6 +24,19 @@ kubeprovisionvm()
   done
 }
 
+kubeprovisionvmonly()
+{
+  # check if we have k8s profile or create one
+  lxc profile list | grep -qo k8svm || (lxc profile create k8svm && cat k8s-profile-config-vm | lxc profile edit k8svm)
+  echo
+  for node in $NODES
+  do
+    echo "==> Running provisioner script on $node"
+    cat bootstrap-kube-vm.sh | lxc exec $node bash
+    echo
+  done
+}
+
 kubeprovision()
 {
   # check if we have k8s profile or create one
@@ -82,6 +95,10 @@ case "$1" in
   ponly)
     echo -e "\nAssuming Containers Created. Only Provisioning...\n"
     kubeprovisiononly
+    ;;
+  ponlyvm)
+    echo -e "\nAssuming Virtual Machine Created. Only Provisioning...\n"
+    kubeprovisionvmonly
     ;;
   *)
     usage
