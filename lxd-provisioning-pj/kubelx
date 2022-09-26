@@ -32,7 +32,7 @@ kubeprovision()
   echo
 
   echo "==> Bringing up kmaster"
-  lxc launch ubuntu:20.04 kmaster --profile k8s
+  lxc launch ubuntu:22.04 kmaster --profile k8s
   sleep 30
   echo "==> Running provisioner script on kmaster"
   lxc config device add kmaster kvm unix-char source=/dev/kvm
