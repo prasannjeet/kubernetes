@@ -59,7 +59,8 @@ systemctl reload sshd
 
 echo "[TASK 5] Set root password"
 echo -e "kubeadmin\nkubeadmin" | passwd root 
-echo "export TERM=xterm" >> /etc/bash.bashrc
+echo "export TERM=xterm
+alias k='kubectl -n kube-system'" >> /etc/bash.bashrc
 
 echo "[TASK 6] Install additional packages"
 apt install -qq -y net-tools 
