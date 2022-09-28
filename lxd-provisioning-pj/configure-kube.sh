@@ -17,7 +17,7 @@ then
   rm /etc/containerd/config.toml
   systemctl restart containerd
   # kubeadm init --control-plane-endpoint="192.168.0.5:53" --pod-network-cidr=10.244.0.0/16 --ignore-preflight-errors=all >> /root/kubeinit.log
-  kubeadm init --pod-network-cidr=10.244.0.0/16 --ignore-preflight-errors=all --insecure-skip-tls-verify>> /root/kubeinit.log
+  kubeadm init --pod-network-cidr=10.244.0.0/16 --ignore-preflight-errors=all --v=5>> /root/kubeinit.log
 
   echo "[TASK 9] Copy kube admin config to root user .kube directory"
   mkdir /root/.kube
