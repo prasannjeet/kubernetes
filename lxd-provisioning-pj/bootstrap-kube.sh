@@ -21,9 +21,9 @@ apt-add-repository "deb http://apt.kubernetes.io/ kubernetes-xenial main"
 
 echo "[TASK 3] Install Kubernetes components (kubeadm, kubelet and kubectl)"
 apt install -qq -y kubeadm=1.25.2-00 kubelet=1.25.2-00 kubectl=1.25.2-00 
-echo 'KUBELET_EXTRA_ARGS="--fail-swap-on=false --insecure-skip-tls-verify"' > /etc/default/kubelet
+echo 'KUBELET_EXTRA_ARGS="--fail-swap-on=false"' > /etc/default/kubelet
 
-# Some tweaks to ensure vm works
+# Some tweaks to ensure vm works (--insecure-skip-tls-verify)
 swapoff -a
 echo overlay >> /etc/modules
 
