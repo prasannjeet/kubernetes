@@ -46,6 +46,12 @@ pull-image-on-create: false' > /etc/crictl.yaml
 sysctl net.bridge.bridge-nf-call-iptables=1
 
 sed -i '1s/^/[Unit]\nDescription=Kubernetes\nAfter=syslog.target\nAfter=network.target\n/' /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+
+cat > /etc/sysctl.d/k8s-ipv6.conf <<EOF
+net.ipv6.conf.all.disable_ipv6 = 0
+net.ipv6.conf.default.disable_ipv6 = 0
+EOF
+sysctl --system
 systemctl daemon-reload
 systemctl restart containerd
 # Tweaks end
