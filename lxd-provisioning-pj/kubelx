@@ -47,6 +47,9 @@ kubeprovision()
     echo
   done
 
+  echo "==> Copy config to host"
+  lxc file pull kmaster/etc/kubernetes/admin.conf ~/.kube/config
+
 }
 
 kubedestroy()
