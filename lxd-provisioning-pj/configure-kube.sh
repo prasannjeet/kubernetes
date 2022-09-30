@@ -24,7 +24,8 @@ then
   echo "[TASK 10] Deploy Flannel network"
   su ubuntu
   sleep 35
-  kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+  # kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+  kubectl apply -f https://cloud.weave.works/k8s/net?k8s-version=1.25.2&env.IPALLOC_RANGE=10.244.0.0/16
 
   echo "[TASK 11] Generate and save cluster join command to /joincluster.sh"
   joinCommand=$(kubeadm token create --print-join-command 2>/dev/null) 
