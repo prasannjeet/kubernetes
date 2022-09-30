@@ -10,8 +10,8 @@ apt-get install -qq -y linux-image-$(uname -r)
 echo "[TASK 1] Install containerd runtime"
 apt update -qq 
 apt install -qq -y containerd apt-transport-https 
-mkdir /etc/containerd
-containerd config default > /etc/containerd/config.toml
+# mkdir /etc/containerd
+# containerd config default > /etc/containerd/config.toml
 systemctl restart containerd
 systemctl enable containerd 
 

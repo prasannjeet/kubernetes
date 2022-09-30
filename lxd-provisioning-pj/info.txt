@@ -77,3 +77,11 @@ sysctl --system
 127.0.0.1:2379:
 
 kube-scheduler -> depends on kube-controller-manager-kmaster -> depends on apiserver
+
+
+sysctl --system && systemctl daemon-reload && systemctl restart containerd && systemctl restart kubelet
+
+
+toml set --toml-path config.toml plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc.options.SystemdCgroup false
+
+toml set --toml-path cgroup.path "XX"

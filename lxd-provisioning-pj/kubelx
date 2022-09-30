@@ -39,6 +39,8 @@ kubeprovision()
   lxc config device add kmaster vhost-net unix-char source=/dev/vhost-net
   lxc config device add kmaster vhost-vsock unix-char source=/dev/vhost-vsock
   lxc config device add kmaster "kmsg" unix-char source="/dev/kmsg" path="/dev/kmsg"
+  lxc exec kmaster mkdir /etc/containerd
+  lxc file push config.toml kmaster/etc/containerd/config.toml
   cat bootstrap-kube.sh | lxc exec kmaster bash
   echo
 
