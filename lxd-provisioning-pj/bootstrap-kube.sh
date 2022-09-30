@@ -12,8 +12,8 @@ apt update -qq
 apt install -qq -y containerd apt-transport-https 
 # mkdir /etc/containerd
 # containerd config default > /etc/containerd/config.toml
-systemctl restart containerd
-systemctl enable containerd 
+# systemctl restart containerd
+# systemctl enable containerd 
 
 echo "[TASK 2] Add apt repo for kubernetes"
 curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add - 
@@ -54,6 +54,7 @@ EOF
 sysctl --system
 systemctl daemon-reload
 systemctl restart containerd
+systemctl enable containerd
 # Tweaks end
 
 systemctl restart kubelet
