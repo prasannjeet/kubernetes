@@ -41,6 +41,9 @@ kubeprovision()
   lxc config device add kmaster "kmsg" unix-char source="/dev/kmsg" path="/dev/kmsg"
   lxc exec kmaster mkdir /etc/containerd
   lxc file push ./config.toml kmaster/etc/containerd/config.toml
+  lxc file push ./crictl.yaml kmaster/etc/crictl.yaml
+  lxc exec kmaster mkdir /run/flannel
+  lxc file push ./flannel_subnet.env kmaster/run/flannel/subnet.env
   cat bootstrap-kube.sh | lxc exec kmaster bash
   echo
 
