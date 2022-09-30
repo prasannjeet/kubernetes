@@ -10,10 +10,6 @@ apt-get install -qq -y linux-image-$(uname -r)
 echo "[TASK 1] Install containerd runtime"
 apt update -qq 
 apt install -qq -y containerd apt-transport-https 
-# mkdir /etc/containerd
-# containerd config default > /etc/containerd/config.toml
-# systemctl restart containerd
-# systemctl enable containerd 
 
 echo "[TASK 2] Add apt repo for kubernetes"
 curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add - 
@@ -27,8 +23,9 @@ echo 'KUBELET_EXTRA_ARGS="--fail-swap-on=false"' > /etc/default/kubelet
 swapoff -a
 echo overlay >> /etc/modules
 
-echo '#!/bin/sh -e
-mount --make-rshared /' > /etc/rc.local
+# echo '#!/bin/sh -e
+# mount --make-rshared /' > /etc/rc.local
+
 mkdir /run/flannel
 touch /run/flannel/subnet.env
 echo 'FLANNEL_NETWORK=10.244.0.0/16
@@ -43,14 +40,15 @@ timeout: 2
 debug: false
 pull-image-on-create: false' > /etc/crictl.yaml
 
-sysctl net.bridge.bridge-nf-call-iptables=1
+# sysctl net.bridge.bridge-nf-call-iptables=1
 
-sed -i '1s/^/[Unit]\nDescription=Kubernetes\nAfter=syslog.target\nAfter=network.target\n/' /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+# sed -i '1s/^/[Unit]\nDescription=Kubernetes\nAfter=syslog.target\nAfter=network.target\n/' /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
 
-cat > /etc/sysctl.d/k8s-ipv6.conf <<EOF
-net.ipv6.conf.all.disable_ipv6 = 0
-net.ipv6.conf.default.disable_ipv6 = 0
-EOF
+# cat > /etc/sysctl.d/k8s-ipv6.conf <<EOF
+# net.ipv6.conf.all.disable_ipv6 = 0
+# net.ipv6.conf.default.disable_ipv6 = 0
+# EOF
+
 sysctl --system
 systemctl daemon-reload
 systemctl restart containerd
