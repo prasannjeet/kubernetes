@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# This script has been tested on Ubuntu 20.04
+# This script has been tested on Ubuntu 22.04
 # For other versions of Ubuntu, you might need some tweaking
 
 echo "[TASK 0] Install essential packages"
@@ -18,14 +18,6 @@ apt-add-repository "deb http://apt.kubernetes.io/ kubernetes-xenial main"
 echo "[TASK 3] Install Kubernetes components (kubeadm, kubelet and kubectl)"
 apt install -qq -y kubeadm=1.25.2-00 kubelet=1.25.2-00 kubectl=1.25.2-00 
 echo 'KUBELET_EXTRA_ARGS="--fail-swap-on=false"' > /etc/default/kubelet
-
-# Some tweaks to ensure vm works (--insecure-skip-tls-verify)
-
-# systemctl daemon-reload
-# systemctl restart containerd
-# systemctl enable containerd
-# Tweaks end
-
 systemctl restart kubelet
 
 echo "[TASK 4] Enable ssh password authentication"
