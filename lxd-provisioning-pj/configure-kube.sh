@@ -14,20 +14,16 @@ then
   kubeadm config images pull >/dev/null 2>&1
 
   echo "[TASK 8] Initialize Kubernetes Cluster"
-  # rm /etc/containerd/config.toml
   systemctl restart containerd
-  # kubeadm init --control-plane-endpoint="192.168.0.5:53" --pod-network-cidr=10.244.0.0/16 --ignore-preflight-errors=all >> /root/kubeinit.log
-  kubeadm init --pod-network-cidr=10.244.0.0/16 --ignore-preflight-errors=all --v=5>> /root/kubeinit.log
+  kubeadm init --pod-network-cidr=10.244.0.0/16 --ignore-preflight-errors=all --v=5 >> /root/kubeinit.log 2>&1
 
   echo "[TASK 9] Copy kube admin config to root user .kube directory"
   mkdir /root/.kube
   cp /etc/kubernetes/admin.conf /root/.kube/config  
 
   echo "[TASK 10] Deploy Flannel network"
-  # kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
   su ubuntu
   sleep 35
-  # kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=1.25.2&env.IPALLOC_RANGE=10.244.0.0/16"
   kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
 
   echo "[TASK 11] Generate and save cluster join command to /joincluster.sh"

@@ -4,12 +4,12 @@
 # For other versions of Ubuntu, you might need some tweaking
 
 echo "[TASK 0] Install essential packages"
-apt install -qq -y net-tools curl ssh software-properties-common 
-apt-get install -qq -y linux-image-$(uname -r) 
+apt install -qq -y net-tools curl ssh software-properties-common >/dev/null 2>&1
+apt-get install -qq -y linux-image-$(uname -r) >/dev/null 2>&1
 
 echo "[TASK 1] Install containerd runtime"
-apt update -qq 
-apt install -qq -y containerd apt-transport-https 
+apt update -qq >/dev/null 2>&1
+apt install -qq -y containerd apt-transport-https >/dev/null 2>&1
 
 echo "[TASK 2] Add apt repo for kubernetes"
 curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add - 
@@ -20,12 +20,10 @@ apt install -qq -y kubeadm=1.25.2-00 kubelet=1.25.2-00 kubectl=1.25.2-00
 echo 'KUBELET_EXTRA_ARGS="--fail-swap-on=false"' > /etc/default/kubelet
 
 # Some tweaks to ensure vm works (--insecure-skip-tls-verify)
-# swapoff -a
-# echo overlay >> /etc/modules
 
-systemctl daemon-reload
-systemctl restart containerd
-systemctl enable containerd
+# systemctl daemon-reload
+# systemctl restart containerd
+# systemctl enable containerd
 # Tweaks end
 
 systemctl restart kubelet
