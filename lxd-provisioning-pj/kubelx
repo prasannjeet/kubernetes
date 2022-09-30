@@ -2,7 +2,7 @@
 
 usage()
 {
-  echo "Usage: kubelx [provision|destroy]"
+  echo "Usage: kubelx [provision|destroy|shutdown|restart]"
   exit 1
 }
 
