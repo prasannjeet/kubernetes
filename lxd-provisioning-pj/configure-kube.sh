@@ -14,7 +14,7 @@ then
   kubeadm config images pull >/dev/null 2>&1
 
   echo "[TASK 8] Initialize Kubernetes Cluster"
-  rm /etc/containerd/config.toml
+  # rm /etc/containerd/config.toml
   systemctl restart containerd
   # kubeadm init --control-plane-endpoint="192.168.0.5:53" --pod-network-cidr=10.244.0.0/16 --ignore-preflight-errors=all >> /root/kubeinit.log
   kubeadm init --pod-network-cidr=10.244.0.0/16 --ignore-preflight-errors=all --v=5>> /root/kubeinit.log
