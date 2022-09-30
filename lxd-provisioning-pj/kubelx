@@ -61,6 +61,24 @@ kubedestroy()
   done
 }
 
+kubeshutdown()
+{
+  for node in $NODES
+  do
+    echo "==> Shutting down $node..."
+    lxc exec $node sudo shutdown
+  done
+}
+
+kuberestart()
+{
+  for node in $NODES
+  do
+    echo "==> Restarting $node..."
+    lxc start $node
+  done
+}
+
 case "$1" in
   provision)
     echo -e "\nProvisioning Kubernetes Cluster...\n"
@@ -70,6 +88,14 @@ case "$1" in
     echo -e "\nDestroying Kubernetes Cluster...\n"
     kubedestroy
     ;;
+  shutdown)
+    echo -e "\nShutting down Kubernetes Cluster...\n"
+    kubeshutdown
+    ;;
+  restart)
+    echo -e "\nRestarting down Kubernetes Cluster...\n"
+    kuberestart
+    ;;   
   *)
     usage
     ;;
