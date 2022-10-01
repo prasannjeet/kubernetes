@@ -81,7 +81,7 @@ kubeshutdown()
   for node in $NODES
   do
     echo "==> Shutting down $node..."
-    lxc exec $node sudo shutdown
+    lxc stop $node
   done
 }
 
