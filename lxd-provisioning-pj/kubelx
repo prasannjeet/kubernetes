@@ -43,8 +43,19 @@ kubeprovision()
   echo
   for node in $NODES
   do
-    echo "==> Running provisioner script on $node"
-    cat configure-kube.sh | lxc exec $node bash
+    echo "==> Running configure script on $node"
+
+    if [[ $node =~ .*master.* ]]
+    then
+      cat configure-master.sh | lxc exec $node bash
+      lxc file pull $node/joincluster.sh joincluster.sh
+    fi
+    if [[ $node =~ .*worker.* ]]
+    then
+      lxc file push joincluster.sh $node/joincluster.sh
+      cat configure-worker.sh | lxc exec $node bash
+    fi
+
     echo
   done
 
