@@ -50,6 +50,9 @@ kubeprovision()
   echo "==> Copy config to host"
   lxc file pull kmaster/etc/kubernetes/admin.conf ~/.kube/config
 
+  echo "==> Installing Ingress"
+  cat install-ingress.sh | lxc exec kmaster bash
+
 }
 
 kubedestroy()
