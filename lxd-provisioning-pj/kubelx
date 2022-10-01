@@ -18,6 +18,7 @@ kubeprovision()
   echo "==> Bringing up kmaster"
   lxc launch ubuntu:22.04 kmaster --profile k8s
   sleep 30
+  lxc config device add kmaster eth0 nic nictype=bridged parent=br0 name=eth0
   echo "==> Running provisioner script on kmaster"
   lxc config device add kmaster kvm unix-char source=/dev/kvm
   lxc config device add kmaster vhost-net unix-char source=/dev/vhost-net
