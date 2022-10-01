@@ -16,7 +16,7 @@ curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
 apt-add-repository "deb http://apt.kubernetes.io/ kubernetes-xenial main" 
 
 echo "[TASK 3] Install Kubernetes components (kubeadm, kubelet and kubectl)"
-apt install -qq -y kubeadm=1.25.2-00 kubelet=1.25.2-00 kubectl=1.25.2-00 
+apt install -qq -y kubeadm=1.24.6-00 kubelet=1.24.6-00 kubectl=1.24.6-00 
 echo 'KUBELET_EXTRA_ARGS="--fail-swap-on=false"' > /etc/default/kubelet
 systemctl restart kubelet
 
