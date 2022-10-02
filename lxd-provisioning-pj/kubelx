@@ -65,9 +65,12 @@ kubeprovision()
   echo "==> Installing Ingress"
   cat install-ingress.sh | lxc exec kmaster bash
 
-  # echo "==> Installing Rancher"
-  # cat install-rancher.sh | lxc exec kmaster bash
+  echo "==> Installing Rancher"
+  cat install-rancher.sh | lxc exec kmaster bash
+  kubectl delete ingress rancher -n cattle-system
+  kubectl create -f ing-resource-rancher.yaml -n cattle-system
 
+  git reset --hard head
 }
 
 kubedestroy()
