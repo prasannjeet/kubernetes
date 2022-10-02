@@ -65,6 +65,9 @@ kubeprovision()
   echo "==> Installing Ingress"
   cat install-ingress.sh | lxc exec kmaster bash
 
+  # echo "==> Installing Rancher"
+  # cat install-rancher.sh | lxc exec kmaster bash
+
 }
 
 kubedestroy()
