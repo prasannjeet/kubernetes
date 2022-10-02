@@ -1,0 +1,43 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    cert-manager.io/issuer: rancher
+    cert-manager.io/issuer-kind: Issuer
+    meta.helm.sh/release-name: rancher
+    meta.helm.sh/release-namespace: cattle-system
+    nginx.ingress.kubernetes.io/proxy-connect-timeout: "30"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "1800"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "1800"
+  creationTimestamp: "2022-10-02T16:20:33Z"
+  generation: 1
+  labels:
+    app: rancher
+    app.kubernetes.io/managed-by: Helm
+    chart: rancher-2.6.8
+    heritage: Helm
+    release: rancher
+  name: rancher
+  namespace: cattle-system
+  resourceVersion: "31012"
+  uid: 2ebeb5d7-b499-4d7c-aa98-c36c3af704b1
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: rancher.logicalguy.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: rancher
+            port:
+              number: 80
+        pathType: ImplementationSpecific
+  tls:
+  - hosts:
+    - rancher.logicalguy.com
+    secretName: tls-rancher-ingress
+status:
+  loadBalancer: {}
