@@ -6,8 +6,8 @@ usage()
   exit 1
 }
 
-NODES="kmaster kworker1 kworker2"
-WORKERS="kworker1 kworker2"
+NODES="kmaster kworker1 kworker2 kworker3"
+WORKERS="kworker1 kworker2 kworker3"
 
 kubeprovision()
 {
