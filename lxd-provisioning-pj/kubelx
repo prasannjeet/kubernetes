@@ -70,7 +70,7 @@ kubeprovision()
   kubectl delete ingress rancher -n cattle-system
   kubectl create -f ing-resource-rancher.yaml -n cattle-system
 
-  git reset --hard head
+  git reset --hard master
 }
 
 kubedestroy()
