@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: nfs-persistent-volume
+  namespace: traefik
+spec:
+  capacity:
+    storage: 1Gi
+  volumeMode: Filesystem
+  persistentVolumeReclaimPolicy: Recycle
+  storageClassName: nfs
+  mountOptions:
+    - hard
+    - nfsvers=3
+  accessModes:
+    - ReadWriteMany
+  nfs:
+    server: my.server
+    path: /home/pj/nfs/public/traefik
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: nfs-volume-claim
+  namespace: traefik
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: nfs
+  resources:
+    requests:
+      storage: 128Mi

@@ -1,0 +1,64 @@
+additionalArguments:
+ - --certificatesresolvers.dynu.acme.dnschallenge.provider=dynu
+ - --certificatesresolvers.dynu.acme.email=$(DYNU_EMAIL)
+ - --certificatesresolvers.dynu.acme.dnschallenge.resolvers=1.1.1.1
+ - --certificatesresolvers.dynu.acme.storage=/ssl-certs/acme-dynu.json
+ - --accesslog.filepath=/ssl-certs/access.log
+
+logs:
+# Configure log settings here...
+  general:
+    level: INFO
+
+ports:
+# Configure your entrypoints here...
+  web:
+    # (optional) Permanent Redirect to HTTPS
+    redirectTo: websecure
+  websecure:
+    tls:
+      enabled: true
+      # (optional) Set a Default CertResolver
+      certResolver: dynu
+  
+
+env:
+  - name: DYNU_API_KEY
+    valueFrom:
+      secretKeyRef:
+        key: apiKey
+        name: dynu-credentials
+  - name: DYNU_EMAIL
+    valueFrom:
+      secretKeyRef:
+        key: email
+        name: dynu-credentials
+
+# Disable Dashboard
+ingressRoute:
+  dashboard:
+    enabled: true
+
+# Persistent Storage
+persistence:
+  accessMode: ReadWriteMany
+  size: 128Mi
+  annotations: {}
+  enabled: true
+  name: ssl-certs
+  existingClaim: nfs-volume-claim
+  path: /ssl-certs
+
+
+initContainers:
+  - name: volume-permissions
+    image: busybox:1.31.1
+    command: ["sh", "-c", "touch /ssl-certs/acme-dynu.json && chmod -Rv 600 /ssl-certs/* && chown 65532:65532 /ssl-certs/acme-dynu.json"]
+    volumeMounts:
+      - name: ssl-certs
+        mountPath: /ssl-certs
+
+# Set Traefik as your default Ingress Controller, according to Kubernetes 1.19+ changes.
+ingressClass:
+  enabled: true
+  isDefaultClass: true

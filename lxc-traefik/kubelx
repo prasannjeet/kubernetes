@@ -1,0 +1,131 @@
+#!/bin/bash
+
+usage()
+{
+  echo "Usage: kubelx [provision|destroy|shutdown|restart]"
+  exit 1
+}
+
+NODES="kmaster kworker1 kworker2 kworker3"
+WORKERS="kworker1 kworker2 kworker3"
+
+kubeprovision()
+{
+  # check if we have k8s profile or create one
+  lxc profile list | grep -qo k8s || (lxc profile create k8s && cat k8s-profile-config | lxc profile edit k8s)
+  echo
+
+  echo "==> Bringing up kmaster"
+  lxc launch ubuntu:22.04 kmaster --profile k8s
+  sleep 30
+  lxc config device add kmaster eth0 nic nictype=bridged parent=br0 name=eth0
+  echo "==> Running provisioner script on kmaster"
+  lxc config device add kmaster kvm unix-char source=/dev/kvm
+  lxc config device add kmaster vhost-net unix-char source=/dev/vhost-net
+  lxc config device add kmaster vhost-vsock unix-char source=/dev/vhost-vsock
+  lxc config device add kmaster "kmsg" unix-char source="/dev/kmsg" path="/dev/kmsg"
+  lxc exec kmaster mkdir /etc/containerd
+  lxc file push ./config.toml kmaster/etc/containerd/config.toml
+  lxc file push ./crictl.yaml kmaster/etc/crictl.yaml
+  lxc exec kmaster mkdir /run/flannel
+  lxc file push ./flannel_subnet.env kmaster/run/flannel/subnet.env
+  cat bootstrap-kube.sh | lxc exec kmaster bash
+  echo
+
+  echo "==> Copying kmaster containers to workers"
+  for worker in $WORKERS
+  do
+    lxc copy kmaster $worker
+    lxc start $worker
+  done
+
+  echo "==> Running configure script to all nodes"
+  echo
+  for node in $NODES
+  do
+    echo "==> Running configure script on $node"
+
+    if [[ $node =~ .*master.* ]]
+    then
+      cat configure-master.sh | lxc exec $node bash
+      lxc file pull $node/joincluster.sh joincluster.sh
+    fi
+    if [[ $node =~ .*worker.* ]]
+    then
+      lxc file push joincluster.sh $node/joincluster.sh
+      cat configure-worker.sh | lxc exec $node bash
+    fi
+
+    echo
+  done
+
+  echo "==> Copy config to host"
+  lxc file pull kmaster/etc/kubernetes/admin.conf ~/.kube/config
+
+  # echo "==> Installing Ingress"
+  # cat install-ingress.sh | lxc exec kmaster bash
+
+  echo "==> Installing Ingress Traefik"
+  # lxc file push traefik-files/dynu_credentials.yaml kmaster/traefik/dynu_credentials.yaml
+  # lxc file push traefik-files/nfs_volume_claim.yaml kmaster/traefik/nfs_volume_claim.yaml
+  kubectl create -f traefik-files/dynu_credentials.yaml
+  kubectl create -f traefik-files/nfs_volume_claim.yaml
+  lxc file push traefik-files/values_pj.yaml kmaster/values.yaml
+  lxc exec kmaster helm upgrade --install traefik traefik/traefik --values=values.yaml --namespace traefik --set service.type="ClusterIP"
+
+  echo "==> Installing Rancher"
+  cat install-rancher.sh | lxc exec kmaster bash
+  # kubectl delete ingress rancher -n cattle-system
+  # kubectl create -f ing-resource-rancher.yaml -n cattle-system
+
+  git reset --hard master
+}
+
+kubedestroy()
+{
+  for node in $NODES
+  do
+    echo "==> Destroying $node..."
+    lxc delete --force $node
+  done
+}
+
+kubeshutdown()
+{
+  for node in $NODES
+  do
+    echo "==> Shutting down $node..."
+    lxc stop $node
+  done
+}
+
+kuberestart()
+{
+  for node in $NODES
+  do
+    echo "==> Restarting $node..."
+    lxc start $node
+  done
+}
+
+case "$1" in
+  provision)
+    echo -e "\nProvisioning Kubernetes Cluster...\n"
+    kubeprovision
+    ;;
+  destroy)
+    echo -e "\nDestroying Kubernetes Cluster...\n"
+    kubedestroy
+    ;;
+  shutdown)
+    echo -e "\nShutting down Kubernetes Cluster...\n"
+    kubeshutdown
+    ;;
+  restart)
+    echo -e "\nRestarting down Kubernetes Cluster...\n"
+    kuberestart
+    ;;   
+  *)
+    usage
+    ;;
+esac

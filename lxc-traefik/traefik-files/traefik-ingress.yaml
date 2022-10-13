@@ -1,0 +1,19 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+  name: traefik-web-ui
+  namespace: traefik
+spec:
+  ingressClassName: traefik
+  rules:
+  - host: logicalguy.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: traefik
+            port:
+              number: 80
+        path: /
+        pathType: ImplementationSpecific
