@@ -3,7 +3,7 @@ kind: Ingress
 metadata:
   annotations:
   name: traefik-web-ui
-  namespace: traefik
+  namespace: cattle-system
 spec:
   ingressClassName: traefik
   rules:

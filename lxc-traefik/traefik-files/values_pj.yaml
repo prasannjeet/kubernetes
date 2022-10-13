@@ -25,6 +25,8 @@ ports:
   
 
 env:
+  - name: TZ
+    value: Europe/Stockholm
   - name: DYNU_API_KEY
     valueFrom:
       secretKeyRef:
