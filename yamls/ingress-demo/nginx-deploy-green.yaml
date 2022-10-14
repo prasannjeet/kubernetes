@@ -4,7 +4,6 @@ metadata:
   labels:
     run: nginx
   name: nginx-deploy-green
-  namespace: cattle-system
 spec:
   replicas: 1
   selector:
