@@ -66,9 +66,9 @@ kubeprovision()
   # cat install-ingress.sh | lxc exec kmaster bash
 
   # echo "==> Installing Ingress Traefik"
+  # kubectl create namespace traefik
   # lxc file push traefik-files/dynu_credentials.yaml kmaster/traefik/dynu_credentials.yaml
   # lxc file push traefik-files/nfs_volume_claim.yaml kmaster/traefik/nfs_volume_claim.yaml
-  # kubectl create namespace cattle-system
   # kubectl create -f traefik-files/dynu_credentials.yaml
   # kubectl create -f traefik-files/nfs_volume_claim.yaml
   # lxc file push traefik-files/values_pj.yaml kmaster/values.yaml

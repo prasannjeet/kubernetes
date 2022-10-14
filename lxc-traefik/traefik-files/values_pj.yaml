@@ -5,7 +5,7 @@ additionalArguments:
  - --certificatesresolvers.dynu.acme.storage=/ssl-certs/acme-dynu.json
  - --accesslog.filepath=/ssl-certs/access.log
 
-kind: DaemonSet
+# kind: DaemonSet
 
 logs:
 # Configure log settings here...
