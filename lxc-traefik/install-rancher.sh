@@ -1,5 +1,6 @@
 #!/bin/bash
 
+kubectl create namespace cattle-system
 helm repo add rancher-stable https://releases.rancher.com/server-charts/stable
 helm repo add rancher-latest https://releases.rancher.com/server-charts/latest
 kubectl create namespace cattle-system

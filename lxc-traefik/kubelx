@@ -65,21 +65,22 @@ kubeprovision()
   # echo "==> Installing Ingress"
   # cat install-ingress.sh | lxc exec kmaster bash
 
-  echo "==> Installing Ingress Traefik"
+  # echo "==> Installing Ingress Traefik"
   # lxc file push traefik-files/dynu_credentials.yaml kmaster/traefik/dynu_credentials.yaml
   # lxc file push traefik-files/nfs_volume_claim.yaml kmaster/traefik/nfs_volume_claim.yaml
-  kubectl create namespace cattle-system
-  kubectl create -f traefik-files/dynu_credentials.yaml
-  kubectl create -f traefik-files/nfs_volume_claim.yaml
-  lxc file push traefik-files/values_pj.yaml kmaster/values.yaml
-  cat install-traefik.sh | lxc exec kmaster bash
+  # kubectl create namespace cattle-system
+  # kubectl create -f traefik-files/dynu_credentials.yaml
+  # kubectl create -f traefik-files/nfs_volume_claim.yaml
+  # lxc file push traefik-files/values_pj.yaml kmaster/values.yaml
+  # cat install-traefik.sh | lxc exec kmaster bash
 
-  echo "==> Installing Rancher"
-  cat install-rancher.sh | lxc exec kmaster bash
+  # echo "==> Installing Rancher"
+  # cat install-rancher.sh | lxc exec kmaster bash
   # kubectl delete ingress rancher -n cattle-system
   # kubectl create -f ing-resource-rancher.yaml -n cattle-system
 
   git reset --hard master
+  echo "==> All done"
 }
 
 kubedestroy()
