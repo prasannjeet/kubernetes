@@ -62,21 +62,40 @@ kubeprovision()
   echo "==> Copy config to host"
   lxc file pull kmaster/etc/kubernetes/admin.conf ~/.kube/config
 
-  # echo "==> Installing Ingress"
-  # cat install-ingress.sh | lxc exec kmaster bash
+  echo "==> Installing Metallb"
+  kubectl get configmap kube-proxy -n kube-system -o yaml | sed -e "s/strictARP: false/strictARP: true/" | kubectl apply -f - -n kube-system
+  kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.13.6/config/manifests/metallb-native.yaml
+  kubectl apply -f metallb/ip-advert.yaml -n metallb-system
 
-  # echo "==> Installing Ingress Traefik"
-  # kubectl create namespace traefik
-  # lxc file push traefik-files/dynu_credentials.yaml kmaster/traefik/dynu_credentials.yaml
-  # lxc file push traefik-files/nfs_volume_claim.yaml kmaster/traefik/nfs_volume_claim.yaml
-  # kubectl create -f traefik-files/dynu_credentials.yaml
-  # kubectl create -f traefik-files/nfs_volume_claim.yaml
-  # lxc file push traefik-files/values_pj.yaml kmaster/values.yaml
-  # cat install-traefik.sh | lxc exec kmaster bash
+  echo "==> Installing Ingress Traefik"
+  kubectl create namespace traefik
+  kubectl create -f traefik-files/dynu_credentials.yaml
+  kubectl create -f traefik-files/nfs_volume_claim.yaml
+  helm repo add traefik https://helm.traefik.io/traefik
+  helm repo update
+  helm upgrade --install traefik traefik/traefik --values=values_pj.yaml --namespace traefik
 
-  # echo "==> Installing Rancher"
-  # cat install-rancher.sh | lxc exec kmaster bash
-  # kubectl delete ingress rancher -n cattle-system
+  echo "==> Installing Rancher"
+  kubectl create namespace cattle-system
+  kubectl apply -f rancher-files/nfs_volume_claim.yaml
+  helm repo add rancher-stable https://releases.rancher.com/server-charts/stable
+  helm repo add rancher-latest https://releases.rancher.com/server-charts/latest
+  helm repo add jetstack https://charts.jetstack.io
+  helm repo update
+  kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.7.1/cert-manager.crds.yaml
+  helm install cert-manager jetstack/cert-manager --namespace cert-manager --create-namespace --version v1.7.1
+  helm upgrade --install rancher rancher-latest/rancher \
+     --set hostname=rancher.ooguy.com \
+     --namespace cattle-system \
+     --set replicas=3 \
+     --set ingress.ingressClassName=traefik \
+     --set customLogos.enabled=true \
+     --set customLogos.volumeName=nfs-rancher-claim \
+     --set customLogos.size=128Mi \
+     --set bootstrapPassword=admin
+  kubectl -n cattle-system rollout status deploy/rancher
+
+  kubectl delete ingress rancher -n cattle-system
   # kubectl create -f ing-resource-rancher.yaml -n cattle-system
 
   git reset --hard master

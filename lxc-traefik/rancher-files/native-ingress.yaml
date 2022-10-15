@@ -9,7 +9,7 @@ metadata:
     nginx.ingress.kubernetes.io/proxy-connect-timeout: "30"
     nginx.ingress.kubernetes.io/proxy-read-timeout: "1800"
     nginx.ingress.kubernetes.io/proxy-send-timeout: "1800"
-  creationTimestamp: "2022-10-02T16:20:33Z"
+  creationTimestamp: "2022-10-15T12:47:31Z"
   generation: 1
   labels:
     app: rancher
@@ -19,17 +19,15 @@ metadata:
     release: rancher
   name: rancher
   namespace: cattle-system
-  resourceVersion: "31012"
-  uid: 2ebeb5d7-b499-4d7c-aa98-c36c3af704b1
+  resourceVersion: "2840"
+  uid: 15e62a9c-99d4-4d3e-ab65-ea08bea43751
 spec:
-  ingressClassName: nginx
+  ingressClassName: traefik
   rules:
   - host: rancher.ooguy.com
     http:
       paths:
-      - path: /
-        pathType: Prefix
-        backend:
+      - backend:
           service:
             name: rancher
             port:

@@ -1,3 +1,16 @@
 1. enabled strict arp mode in kube proxy
  -- kubectl get configmap kube-proxy -n kube-system -o yaml | sed -e "s/strictARP: false/strictARP: true/" | kubectl apply -f - -n kube-system
+
+ kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.13.6/config/manifests/metallb-native.yaml
+
  2. Now apply ip-advert.yaml
+
+-----------------
+
+Traefik!
+
+helm upgrade --install traefik traefik/traefik --values=values.yaml --namespace traefik
+
+# port forwards temp: kubectl -n traefik port-forward traefik-8475db6f98-j72s8 9005:9000 --address 0.0.0.0
+# setup in the host machine
+# To port forward traefik termporarily, use this: kubectl -n traefik port-forward traefik-8475db6f98-j72s8 9005:9000 --address 0.0.0.0
