@@ -99,6 +99,8 @@ kubeprovision()
   kubectl delete ingress rancher -n cattle-system
   # kubectl create -f ing-resource-rancher.yaml -n cattle-system
 
+  kubectl apply -f rancher-files/traefik-route.yaml
+
   git reset --hard master
   echo "==> All done"
 }
