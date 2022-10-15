@@ -68,38 +68,38 @@ kubeprovision()
   sleep 60
   kubectl apply -f metallb/ip-advert.yaml -n metallb-system
 
-  # echo "==> Installing Ingress Traefik"
-  # kubectl create namespace traefik
-  # kubectl create -f traefik-files/dynu_credentials.yaml
-  # kubectl create -f traefik-files/nfs_volume_claim.yaml
-  # helm repo add traefik https://helm.traefik.io/traefik
-  # helm repo update
+  echo "==> Installing Ingress Traefik"
+  kubectl create namespace traefik
+  kubectl create -f traefik-files/dynu_credentials.yaml
+  kubectl create -f traefik-files/nfs_volume_claim.yaml
+  helm repo add traefik https://helm.traefik.io/traefik
+  helm repo update
   helm upgrade --install traefik traefik/traefik --values=values_pj.yaml --namespace traefik
 
-  # echo "==> Installing Rancher"
-  # kubectl create namespace cattle-system
-  # kubectl apply -f rancher-files/nfs_volume_claim.yaml
-  # helm repo add rancher-stable https://releases.rancher.com/server-charts/stable
-  # helm repo add rancher-latest https://releases.rancher.com/server-charts/latest
-  # helm repo add jetstack https://charts.jetstack.io
-  # helm repo update
-  # kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.7.1/cert-manager.crds.yaml
-  # helm install cert-manager jetstack/cert-manager --namespace cert-manager --create-namespace --version v1.7.1
-  # helm upgrade --install rancher rancher-latest/rancher \
-  #    --set hostname=rancher.ooguy.com \
-  #    --namespace cattle-system \
-  #    --set replicas=3 \
-  #    --set ingress.ingressClassName=traefik \
-  #    --set customLogos.enabled=true \
-  #    --set customLogos.volumeName=nfs-rancher-claim \
-  #    --set customLogos.size=128Mi \
-  #    --set bootstrapPassword=admin
-  # kubectl -n cattle-system rollout status deploy/rancher
+  echo "==> Installing Rancher"
+  kubectl create namespace cattle-system
+  kubectl apply -f rancher-files/nfs_volume_claim.yaml
+  helm repo add rancher-stable https://releases.rancher.com/server-charts/stable
+  helm repo add rancher-latest https://releases.rancher.com/server-charts/latest
+  helm repo add jetstack https://charts.jetstack.io
+  helm repo update
+  kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.7.1/cert-manager.crds.yaml
+  helm install cert-manager jetstack/cert-manager --namespace cert-manager --create-namespace --version v1.7.1
+  helm upgrade --install rancher rancher-latest/rancher \
+     --set hostname=rancher.ooguy.com \
+     --namespace cattle-system \
+     --set replicas=3 \
+     --set ingress.ingressClassName=traefik \
+     --set customLogos.enabled=true \
+     --set customLogos.volumeName=nfs-rancher-claim \
+     --set customLogos.size=128Mi \
+     --set bootstrapPassword=admin
+  kubectl -n cattle-system rollout status deploy/rancher
 
-  # kubectl delete ingress rancher -n cattle-system
-  # # kubectl create -f ing-resource-rancher.yaml -n cattle-system
+  kubectl delete ingress rancher -n cattle-system
+  # kubectl create -f ing-resource-rancher.yaml -n cattle-system
 
-  # kubectl apply -f rancher-files/traefik-route.yaml
+  kubectl apply -f rancher-files/traefik-route.yaml
 
   git reset --hard master
   echo "==> All done"
