@@ -1,17 +1,17 @@
 apiVersion: traefik.containo.us/v1alpha1
 kind: IngressRoute
 metadata:
-  name: rancher-traefik-ingressroute
-  namespace: cattle-system
+  name: dashboard
+  namespace: traefik
 spec:
   entryPoints:
     - web
     - websecure
   routes:
-    - match: Host(`rancher.ooguy.com`)
+    - match: Host(`traefik.ooguy.com`)
       kind: Rule
       services:
-        - name: rancher
-          port: 80
+        - name: api@internal
+          kind: TraefikService
   tls:
     certResolver: dynu
