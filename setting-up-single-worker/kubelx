@@ -24,12 +24,7 @@ kubeprovision()
   cat bootstrap-kube.sh | lxc exec $NODE bash
   echo
 
-  echo "==> Running configure script on $NODE"
-  # lxc file push joincluster.sh $node/joincluster.sh
-  cat configure-worker.sh | lxc exec $NODE bash
-  echo
-
-  echo "==> All done. Manually join the cluster by running the command `kubeadm token create --print-join-command` in master."
+  echo "==> All done. Manually join the cluster by running the command 'kubeadm token create --print-join-command' in master."
 }
 
 case "$1" in
