@@ -1,0 +1,5 @@
+chmod 777 acme-dynu.json
+chown 65532 acme-dynu.json
+chmod 660 acme-dynu.json
+
+For traefik file permissions

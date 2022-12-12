@@ -1,0 +1,44 @@
+#!/bin/bash
+
+# NODES="kmaster kworker1 kworker2 kworker3"
+# WORKERS="kworker1 kworker2 kworker3"
+
+NODE=$2
+
+kubeprovision()
+{
+  # check if we have k8s profile or create one
+  lxc profile list | grep -qo k8s || (lxc profile create k8s && cat k8s-profile-config | lxc profile edit k8s)
+  echo
+
+  echo "==> Bringing up $2"
+  lxc launch ubuntu:22.04 $2 --profile k8s
+  sleep 30
+  lxc config device add $2 eth0 nic nictype=bridged parent=br0 name=eth0
+  echo "==> Running provisioner script on $2"
+  lxc config device add $2 kvm unix-char source=/dev/kvm
+  lxc config device add $2 vhost-net unix-char source=/dev/vhost-net
+  lxc config device add $2 vhost-vsock unix-char source=/dev/vhost-vsock
+  lxc config device add $2 "kmsg" unix-char source="/dev/kmsg" path="/dev/kmsg"
+  lxc exec $2 mkdir /etc/containerd
+  lxc file push ./config.toml $2/etc/containerd/config.toml
+  lxc file push ./crictl.yaml $2/etc/crictl.yaml
+  lxc exec $2 mkdir /run/flannel
+  lxc file push ./flannel_subnet.env $2/run/flannel/subnet.env
+  cat bootstrap-kube.sh | lxc exec $2 bash
+  echo
+
+  echo "==> Running configure script on $2"
+  # lxc file push joincluster.sh $node/joincluster.sh
+  cat configure-worker.sh | lxc exec $node bash
+  echo
+
+  echo "==> All done. Manually join the cluster by running the command `kubeadm token create --print-join-command` master."
+}
+
+case "$1" in
+  provision)
+    echo -e "\nProvisioning Kubernetes Cluster...\n"
+    kubeprovision
+    ;;
+esac
