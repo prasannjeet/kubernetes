@@ -8,7 +8,7 @@ kubeprovision()
   echo
 
   echo "==> Bringing up $NODE"
-  lxc launch ubuntu:22.04  --profile k8s
+  lxc launch ubuntu:22.04 $NODE --profile k8s
   sleep 30
   lxc config device add $NODE eth0 nic nictype=bridged parent=br0 name=eth0
   echo "==> Running provisioner script on $NODE"
